@@ -6,3 +6,4 @@ blob-report/
 .auth/
 .DS_Store
 .features-gen/
+pacts/
