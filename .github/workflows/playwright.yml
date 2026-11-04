@@ -1,5 +1,13 @@
 name: Playwright Tests
-on: [push, pull_request]
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
 
 jobs:
   test:
@@ -7,7 +15,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        project: [api, ui-chromium, ui-firefox, mobile-android, mobile-ios, contract-provider]
+        project: [api, api-booker, ui-chromium, ui-firefox, mobile-android, mobile-ios, bdd, contract-provider]
     steps:
       - uses: actions/checkout@v4
 
@@ -18,6 +26,8 @@ jobs:
       - run: npm ci
 
       - run: npx playwright install --with-deps
+
+      - run: npx bddgen
 
       - run: npx playwright test --project=${{ matrix.project }}
 
