@@ -6,6 +6,8 @@ const { CheckoutPage } = require('../pages/CheckoutPage');
 const { PostsService } = require('../api/services/PostsService');
 const { UsersService } = require('../api/services/UsersService');
 const env = require('../../config/env');
+const { AuthService } = require('../api/services/AuthService');
+const { BookingService } = require('../api/services/BookingService');
 
 const test = base.test.extend({
   loginPage:     async ({ page }, use) => use(new LoginPage(page)),
@@ -42,5 +44,14 @@ testPost: async ({ request }, use) => {
 
   postsService: async ({ request }, use) => use(new PostsService(request)),
   usersService: async ({ request }, use) => use(new UsersService(request)),
+  authService: async ({ request }, use) => use(new AuthService(request)),
+  bookingService: async ({ request }, use) => use(new BookingService(request)),
+
+// Valid token, ready for any test that needs one
+authToken: async ({ request }, use) => {
+  const res = await new AuthService(request).createToken(env.BOOKER_USER, env.BOOKER_PASSWORD);
+  const { token } = await res.json();
+  await use(token);
+},
 });
 module.exports = { test, expect: base.expect };

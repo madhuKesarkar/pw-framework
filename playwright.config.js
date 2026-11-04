@@ -52,5 +52,18 @@ module.exports = defineConfig({
     dependencies: ['setup'],
     use: { ...devices['iPhone 14'], baseURL: env.UI_BASE_URL, storageState: '.auth/user.json' },
   },
+
+  {
+  name: 'api-booker',
+  testDir: './tests/api-booker',
+  timeout: 60_000,   // free Heroku host can be slow to wake up
+  use: {
+    baseURL: env.BOOKER_BASE_URL,
+    extraHTTPHeaders: {
+      'Content-Type': 'application/json',
+      Accept: 'application/json',
+    },
+  },
+ },
 ],
 });
