@@ -5,3 +5,4 @@ blob-report/
 .env
 .auth/
 .DS_Store
+.features-gen/
