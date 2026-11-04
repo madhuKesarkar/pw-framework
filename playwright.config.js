@@ -1,5 +1,11 @@
 const { defineConfig, devices } = require('@playwright/test');
 const env = require('./config/env');
+const { defineBddConfig } = require('playwright-bdd');
+
+const bddTestDir = defineBddConfig({
+  features: 'features/**/*.feature',
+  steps: ['steps/**/*.js', 'src/fixtures/bdd.js'],
+});
 
 module.exports = defineConfig({
   testDir: './tests',
@@ -65,5 +71,12 @@ module.exports = defineConfig({
     },
   },
  },
+
+ {
+  name: 'bdd',
+  testDir: bddTestDir,
+  use: { ...devices['Desktop Chrome'], baseURL: env.UI_BASE_URL },
+},
+
 ],
 });
