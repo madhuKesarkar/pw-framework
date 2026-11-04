@@ -78,5 +78,18 @@ module.exports = defineConfig({
   use: { ...devices['Desktop Chrome'], baseURL: env.UI_BASE_URL },
 },
 
+{
+  name: 'contract-consumer',
+  testDir: './tests/contract',
+  testMatch: /\.consumer\.pact\.spec\.js/,
+},
+
+{
+  name: 'contract-provider',
+  testDir: './tests/contract',
+  testMatch: /\.provider\.verify\.spec\.js/,
+  dependencies: ['contract-consumer'],   // contract is always generated first
+}
+
 ],
 });
