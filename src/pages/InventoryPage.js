@@ -11,7 +11,19 @@ class InventoryPage extends BasePage {
     this.menuButton = page.locator('#react-burger-menu-btn');
     this.logoutLink = this.byTestId('logout-sidebar-link');
   }
-  async addToCart(name) { await this.byTestId(`add-to-cart-${name.toLowerCase().replace(/\s+/g, '-')}`).click(); }
+  /** e.g. "Sauce Labs Backpack" -> data-test="add-to-cart-sauce-labs-backpack" */
+  async addToCart(productName) {
+    const slug = productName.toLowerCase().replace(/\s+/g, '-');
+    const button = await this.find({
+      name: 'addToCart',
+      intent: `the Add to cart button for ${productName}`,
+      testId: `add-to-cart-${slug}`,
+      role: 'button',
+      // Deliberately generic: there are 6 "Add to cart" buttons, so the healer must refuse
+      backups: [{ type: 'role', role: 'button', name: 'Add to cart' }],
+    });
+    await button.click();
+  }
   async sortBy(option) { await this.sortDropdown.selectOption(option); }
   async getAllPrices() { return (await this.prices.allTextContents()).map(t => parseFloat(t.replace('$', ''))); }
   async openCart() { await this.cartLink.click(); }

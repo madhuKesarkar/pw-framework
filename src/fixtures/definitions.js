@@ -6,6 +6,8 @@ const { PostsService } = require('../api/services/PostsService');
 const { UsersService } = require('../api/services/UsersService');
 const { AuthService } = require('../api/services/AuthService');
 const { BookingService } = require('../api/services/BookingService');
+const fs = require('fs');
+const { setHealingContext } = require('../healing/healer');
 const env = require('../../config/env');
 
 const fixtures = {
@@ -41,6 +43,24 @@ const fixtures = {
     await use(post);
     await request.delete(`${env.API_BASE_URL}/posts/${post.id}`);
   },
+
+  // off | report | heal. Default from the environment, overridable per file with test.use()
+healMode: [process.env.HEAL_MODE || 'off', { option: true }],
+
+// Auto fixture: runs for every test, collects heal events, attaches them to the report
+healing: [async ({ healMode }, use, testInfo) => {
+  const events = [];
+  setHealingContext({ mode: healMode, events });
+
+  await use(events);
+
+  if (events.length) {
+    const body = JSON.stringify(events, null, 2);
+    await testInfo.attach('healing-events', { body, contentType: 'application/json' });
+    fs.writeFileSync(testInfo.outputPath('healing.json'), body);
+  }
+}, { auto: true }],
+
 };
 
 module.exports = { fixtures };
